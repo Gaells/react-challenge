@@ -1,29 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { fetchProducts } from './productApi';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Product } from './redux/types';
 
 const App: React.FC = () => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetchProducts().then(data => {
-      setProducts(data);
-    });
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get<Product[]>('http://localhost:3000/products');
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   return (
-    <div className="App">
+    <div>
       <h1>Lista de Produtos</h1>
-      <ul>
+      <div>
         {products.map(product => (
-          <li key={product.id}>
+          <div key={product.id}>
             <img src={product.picture} alt={product.title} />
-            <h2>{product.title}</h2>
-            <p>Preço: R${product.price.toFixed(2)}</p>
-          </li>
+            <h3>{product.title}</h3>
+            <p>{`R$ ${product.price.toFixed(2)}`}</p>
+            <button onClick={() => console.log('Product added to cart:', product)}>Adicionar ao Carrinho</button>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
