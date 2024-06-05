@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 import { Product } from './redux/types';
 
 interface CartContextType {
@@ -14,6 +14,7 @@ export const CartProvider: React.FC = ({ children }) => {
   const [items, setItems] = useState<Product[]>([]);
 
   const addToCart = (product: Product) => {
+    console.log('Produto adicionado ao carrinho:', product);
     setItems(prevItems => [...prevItems, product]);
   };
 
@@ -29,8 +30,11 @@ export const CartProvider: React.FC = ({ children }) => {
     );
   };
 
+  // Envolver o valor do contexto em useMemo para evitar recriações desnecessárias
+  const contextValue = useMemo(() => ({ items, addToCart, removeFromCart, updateCartItemQuantity }), [items]);
+
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateCartItemQuantity }}>
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );
