@@ -1,28 +1,25 @@
-import React, { useState } from 'react';
-import { CartProvider, useCart } from './CartContext';
-import CartScreen from './components/CartScreen';
-import ProductList from './ProductList';
-import { Product } from './redux/types';
+import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Navbar } from "./components/NavBar";
+import { Shop } from "./pages/shop/Shop";
+import { Contact } from "./pages/contact";
+import { Cart } from "./pages/cart/Cart";
+import { ShopContextProvider } from "./context/shop-context";
 
 const App: React.FC = () => {
-  const [showCart, setShowCart] = useState<boolean>(false);
-  const { addToCart } = useCart();
-
-  const handleAddToCart = (product: Product) => {
-    addToCart(product);
-  };
-
   return (
-    <CartProvider>
-  <div>
-    <h1>Minha Loja</h1>
-    <button onClick={() => setShowCart(!showCart)}>
-      {showCart ? 'Voltar para a loja' : 'Ver Carrinho'}
-    </button>
-    {showCart ? <CartScreen /> : <ProductList onAddToCart={handleAddToCart} />}
-  </div>
-</CartProvider>
-
+    <div className="App">
+      <ShopContextProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Shop />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/cart" element={<Cart />} />
+          </Routes>
+        </Router>
+      </ShopContextProvider>
+    </div>
   );
 };
 
